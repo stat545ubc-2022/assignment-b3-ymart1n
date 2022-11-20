@@ -8,7 +8,7 @@ This [Shiny App](https://shiny.rstudio.com/) has 11 interactive cryptocurrency m
 
 https://ymart1n.shinyapps.io/Cryptocurrency-Market-Data-Plots/
 
-## Assignment Option:
+## Assignment Option
 
 Option B - your own Shiny app
 
