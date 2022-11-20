@@ -12,7 +12,7 @@ https://ymart1n.shinyapps.io/Cryptocurrency-Market-Data-Plots/
 
 Option B - your own Shiny app
 
-## Features (TODO)
+## Features
 
 1. Add CSS to make the app look nicer
     - In the [CSS file](www/style.css), In the CSS file, I changed the background color of pickerInput to orange when it's focused so that it matches the other widgets' colors.
