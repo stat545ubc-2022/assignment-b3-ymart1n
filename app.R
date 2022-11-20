@@ -1,10 +1,17 @@
 library(shiny)
 
 # ui required packages
+# Feature 3: Experiment with packages that add extra features to Shiny.
+# Adding `shinyWidgets` library to use pickerInput, which is a selectInput
+# substitute with a wide range of customization possibilities.
 library("shinyWidgets")
 
 # server required packages
 library(Quandl)
+# Feature 3: Experiment with packages that add extra features to Shiny.
+# Adding `plotly` library to enable interactive charts with plot_ly, which can
+# be hovered to display detail info at specific point, be downloaded as png
+# image, etc
 library(plotly)
 
 # constant variables
@@ -19,11 +26,18 @@ selections <- list(
   "Bitcoin Total Transaction Fees USD", "Bitcoin Market Capitalization"
 )
 
+# UI
 ui <- fluidPage(
   # include css file for styles
+  # Feature 1: Add CSS to make the app look nicer.
+  # In the CSS file, I changed the background color of pickerInput to orange
+  # when it's focused so that it matches the other widgets' colors.
   includeCSS("www/style.css"),
   titlePanel("Cryptocurrency Market Data Plots"),
   sidebarPanel(
+    # Feature 2: Add an image to the UI.
+    # Adding an image of various cryptocurrency coins to increase the app's
+    # visual appeal and convey a clear understanding of its purpose to users.
     img(width = "100%", src = "crypto.jpg"),
     sliderInput("dates", "Dates",
       min = as.Date(minStartDate, "%Y-%m-%d"), today,
@@ -36,18 +50,20 @@ ui <- fluidPage(
   mainPanel(
     h2("Plot:", textOutput("title")),
     plotlyOutput("plot"),
-    h2("Description"),
+    h2("Details"),
     h4(textOutput("text"))
   )
 )
 
-# Output selection information lists
+# Constant variables needed in Server
+# Output Selection lists
 titles <- c(
   "ETH/BTC", "BTC/USD", "ETH/USD", "Bitcoin Average Block Size",
   "Bitcoin Difficulty", "Bitcoin Hash Rate", "Bitcoin Number of Transactions",
   "Bitcoin Number of Transaction per Block", "Bitcoin Miners Revenue",
   "Bitcoin Total Transaction Fees USD", "Bitcoin Market Capitalization"
 )
+# Output Data source code lists
 dataSrcCode <- c(
   "BITFINEX/ETHBTC", "BCHAIN/MKPRU",
   "BITFINEX/ETHUSD", "BCHAIN/AVBLS",
@@ -57,12 +73,13 @@ dataSrcCode <- c(
   "BCHAIN/MKTCP"
 )
 
+# Server
 server <- function(input, output) {
   Quandl.api_key("aMsGCszXVf33j8xsCtr4")
   dataset_choices <- data.frame(
     Selection = titles,
     Code = dataSrcCode,
-    Description = c(
+    Details = c(
       "Ether (Ethereum Coin) price in Bitcoin",
       "Bitcoin price in USD",
       "Ether (Ethereum Coin) price in USD",
@@ -85,12 +102,17 @@ server <- function(input, output) {
     # change y axis based on the dataset we dealing with
     # if the dataset has no value, it must be dataset related to ETH
     ifelse(is.null(dataset$Value)[1], y <- dataset$High, y <- dataset$Value)
+    # Feature 3: Experiment with packages that add extra features to Shiny.
+    # Adding `plotly` library to enable interactive charts with plot_ly, which can
+    # be hovered to display detail info at specific point, be downloaded as png
+    # image, etc
     plot_ly(type = "scatter", mode = "lines", name = selection()) %>%
       add_trace(x = dataset$Date, y = y, showlegend = FALSE)
   })
   output$text <- renderText(as.character(
-    dataset_choices$Description[dataset_choices$Selection == selection()][1]
+    dataset_choices$Details[dataset_choices$Selection == selection()][1]
   ))
 }
 
+# ShinyApp
 shinyApp(ui = ui, server = server)
