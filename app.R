@@ -48,10 +48,24 @@ ui <- fluidPage(
     setSliderColor("orange", 1)
   ),
   mainPanel(
-    h2("Plot:", textOutput("title")),
-    plotlyOutput("plot"),
-    h2("Details"),
-    h4(textOutput("text"))
+    # Feature 6: Use tabsetPanel() to create an interface with multiple tabs
+    tabsetPanel(
+      tabPanel(
+        "Interactive Plot",
+        h2(textOutput("title")),
+        plotlyOutput("plot"),
+        h2("Details"),
+        h4(textOutput("text"))
+      ),
+      tabPanel(
+        "Interactive Table",
+        br(),
+        # Feature 5: Use the DT package to turn a static table into an interactive table
+        DT::dataTableOutput("data_table")
+      ),
+    ),
+    # Feature 4: Allow the user to download the table in specified time range as a .csv file
+    downloadButton("download_data_table", "Download Data Table as CSV")
   )
 )
 
@@ -99,6 +113,7 @@ server <- function(input, output) {
     # print(dataset_choices$Selection == selection())
     code <- as.character(dataset_choices$Code[dataset_choices$Selection == selection()][1])
     dataset <- Quandl(code, start_date = input$dates[1], end_date = input$dates[2])
+    # print(as.data.frame(dataset))
     # change y axis based on the dataset we dealing with
     # if the dataset has no value, it must be dataset related to ETH
     ifelse(is.null(dataset$Value)[1], y <- dataset$High, y <- dataset$Value)
@@ -112,6 +127,25 @@ server <- function(input, output) {
   output$text <- renderText(as.character(
     dataset_choices$Details[dataset_choices$Selection == selection()][1]
   ))
+
+  # Feature 4: Allow the user to download the table in specified time range as a .csv file
+  output$download_data_table <- downloadHandler(
+    filename = function() {
+      paste(selection(), ".csv")
+    },
+    content = function(file) {
+      code <- as.character(dataset_choices$Code[dataset_choices$Selection == selection()][1])
+      dataset <- Quandl(code, start_date = input$dates[1], end_date = input$dates[2])
+      # print(as.data.frame(dataset))
+      write.csv(as.data.frame(dataset), file)
+    }
+  )
+
+  # Feature 5: Use the DT package to turn a static table into an interactive table
+  output$data_table <- DT::renderDataTable({
+    code <- as.character(dataset_choices$Code[dataset_choices$Selection == selection()][1])
+    dataset <- Quandl(code, start_date = input$dates[1], end_date = input$dates[2])
+  })
 }
 
 # ShinyApp
