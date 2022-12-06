@@ -10,7 +10,7 @@ https://ymart1n.shinyapps.io/Cryptocurrency-Market-Data-Plots-V2/
 
 ## Assignment 4 Option
 
-Option C - Option C – Shiny App
+Option C - Shiny App
 
 Version 2: https://ymart1n.shinyapps.io/Cryptocurrency-Market-Data-Plots-V2/
 
